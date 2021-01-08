@@ -6,11 +6,16 @@ class ORM:
     def __init__(self, path):
         self.db = TinyDB(path)
 
-
     def addTrack(self, track: Track):
-        self.db.insert(vars(track))
+        trackTable = self.db.table('Track')
+        trackTable.insert(vars(track))
+
+    def addTracks(self, tracks: list):
+        trackTable = self.db.table('Track')
+        trackTable.insert_multiple([vars(t) for t in tracks])
 
     def getTracks(self):
-        tQ = Query()
-        return self.db.search(tQ.artist == 'Skrill')
+        trackTable = self.db.table('Track')
+        return trackTable.all()
+        # return self.db.search(tQ.artist == 'Skrill')
         

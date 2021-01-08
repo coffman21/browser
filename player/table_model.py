@@ -1,3 +1,5 @@
+from config_provider import ConfigProvider
+from player.file_manager import FileManager
 from player.data import track
 from player.data.track import Track
 from player.orm import ORM
@@ -6,14 +8,18 @@ from PyQt5.QtCore import *
 
 
 class TableModel(QAbstractTableModel):
-    def __init__(self, parent=None):
+    def __init__(self, path, parent=None):
         super().__init__(parent)
 
-        self.orm = ORM("d:\\workspace\\temp")
-        self.orm.addTrack(Track("Scary monsters", "Skrill", 5))
+        self.orm = ORM(path)
+
+        fm = FileManager(ConfigProvider.getLibraryPath())
+        tracks = fm.walk()
+        self.orm.addTracks(tracks)
+
         tracks = self.orm.getTracks()
         self.rows = tracks
-        self.headers = list(dict(tracks[0]).keys()) if tracks else []
+        self.headers = Track.attributes()
 
     def rowCount(self, parent):
         return len(self.rows)
@@ -24,7 +30,8 @@ class TableModel(QAbstractTableModel):
     def data(self, index, role):
         if role != Qt.DisplayRole:
             return QVariant()
-        return self.rows[index.row()][self.headers[index.column()]]
+        row = self.rows[index.row()]
+        return row.get(self.headers[index.column()])
 
     def headerData(self, section, orientation, role):
         if role != Qt.DisplayRole or orientation != Qt.Horizontal:

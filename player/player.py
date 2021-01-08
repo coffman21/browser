@@ -1,3 +1,5 @@
+from player.file_manager import FileManager
+from config_provider import ConfigProvider
 from player.table_model import TableModel
 import sys
 from PyQt5.QtWidgets import *
@@ -13,9 +15,9 @@ class Player(QMainWindow):
         tableView = QTableView(tableHeaderView)
         tableView.horizontalHeader().setStretchLastSection(True)
 
-        model = TableModel()
+        model = TableModel(ConfigProvider.getDbPath())
         tableView.setModel(model)
-        
+
         topLayout = QVBoxLayout()
         topLayout.addWidget(tableView)
 
