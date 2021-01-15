@@ -8,11 +8,16 @@ class ORM:
 
     def addTrack(self, track: Track):
         trackTable = self.db.table('Track')
-        trackTable.insert(vars(track))
+        trackTable.insert(track.dict())
 
     def addTracks(self, tracks: list):
         trackTable = self.db.table('Track')
-        trackTable.insert_multiple([vars(t) for t in tracks])
+        # trackTable.insert_multiple([t.dict() for t in tracks])
+        for t in tracks:
+            try:
+                trackTable.insert(t.dict())
+            except Exception as e:
+                print(e)
 
     def getTracks(self):
         trackTable = self.db.table('Track')
